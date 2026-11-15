@@ -65,16 +65,18 @@ public struct LocalNLPExtractor {
             }
         }
         
+        let summaryText = takeaways.isEmpty ? String(text.prefix(800)) : takeaways.map { "• **\($0)**" }.joined(separator: "\n\n")
+
         let markdownSummary = """
         # \(title)
         
         ## Fiche de Synthèse
         
-        \(takeaways.isEmpty ? text.prefix(800) : takeaways.map { "• **\($0)**" }.joined(separator: "\n\n"))
+        \(summaryText)
         """
         
         return ExtractionResult(
-            summaryMarkdown: String(markdownSummary),
+            summaryMarkdown: markdownSummary,
             keyTakeaways: Array(takeaways.prefix(6)),
             flashcards: flashcards,
             concepts: concepts
