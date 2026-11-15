@@ -1,13 +1,16 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 public struct DocumentsView: View {
     @ObservedObject var db = DatabaseManager.shared
 
     @State private var showAddSheet: Bool = false
+    @State private var showFileImporter: Bool = false
     @State private var newTitle: String = ""
     @State private var newCategory: String = "Général"
     @State private var newText: String = ""
     @State private var isProcessingDocling: Bool = false
+    @State private var doclingErrorMessage: String? = nil
 
     public var body: some View {
         NavigationView {
@@ -98,7 +101,29 @@ public struct DocumentsView: View {
                             TextField("Matière / Discipline", text: $newCategory)
                         }
 
-                        Section(header: Text("Contenu du Cours / Fiche (Texte ou Docling)")) {
+                        Section(header: Text("Contenu du Cours (Manuel ou Import)")) {
+                            Button(action: { showFileImporter = true }) {
+                                HStack {
+                                    Image(systemName: "doc.badge.plus")
+                                    Text("Importer un fichier (PDF, TXT, Dossier)")
+                                }
+                            }
+                            
+                            if isProcessingDocling {
+                                HStack {
+                                    ProgressView()
+                                    Text("Extraction Docling en cours...")
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
+                                }
+                            }
+                            
+                            if let errorMsg = doclingErrorMessage {
+                                Text(errorMsg)
+                                    .font(.caption)
+                                    .foregroundColor(.red)
+                            }
+
                             TextEditor(text: $newText)
                                 .frame(height: 180)
                         }
@@ -133,8 +158,90 @@ public struct DocumentsView: View {
                             Button("Annuler") { showAddSheet = false }
                         }
                     }
+                    .fileImporter(
+                        isPresented: $showFileImporter,
+                        allowedContentTypes: [.pdf, .plainText, .folder],
+                        allowsMultipleSelection: false
+                    ) { result in
+                        handleFileImport(result)
+                    }
                 }
             }
+        }
+    }
+    
+    private func handleFileImport(_ result: Result<[URL], Error>) {
+        switch result {
+        case .success(let urls):
+            guard let url = urls.first else { return }
+            
+            if url.startAccessingSecurityScopedResource() {
+                defer { url.stopAccessingSecurityScopedResource() }
+                
+                // Si c'est un fichier PDF, on l'envoie à Docling
+                if url.pathExtension.lowercased() == "pdf" {
+                    guard let fileData = try? Data(contentsOf: url) else {
+                        self.doclingErrorMessage = "Erreur de lecture du PDF"
+                        return
+                    }
+                    
+                    self.isProcessingDocling = true
+                    self.doclingErrorMessage = nil
+                    
+                    if newTitle.isEmpty {
+                        self.newTitle = url.deletingPathExtension().lastPathComponent
+                    }
+                    
+                    DoclingClient.shared.convertDocument(fileData: fileData, filename: url.lastPathComponent) { res in
+                        DispatchQueue.main.async {
+                            self.isProcessingDocling = false
+                            switch res {
+                            case .success(let markdown):
+                                self.newText = markdown
+                            case .failure(let error):
+                                self.doclingErrorMessage = "Erreur Docling: \(error.localizedDescription)"
+                            }
+                        }
+                    }
+                } 
+                // Si c'est un fichier texte ou autre format lisible en chaîne de caractères
+                else if let text = try? String(contentsOf: url) {
+                    if newTitle.isEmpty {
+                        self.newTitle = url.deletingPathExtension().lastPathComponent
+                    }
+                    self.newText = text
+                }
+                // Si c'est un dossier (on récupère les fichiers textes/pdf à l'intérieur)
+                else if url.hasDirectoryPath {
+                    do {
+                        let fileManager = FileManager.default
+                        let contents = try fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+                        
+                        var combinedText = ""
+                        for fileURL in contents {
+                            if fileURL.pathExtension.lowercased() == "txt", let text = try? String(contentsOf: fileURL) {
+                                combinedText += "\n\n--- \(fileURL.lastPathComponent) ---\n" + text
+                            }
+                        }
+                        
+                        DispatchQueue.main.async {
+                            if self.newTitle.isEmpty {
+                                self.newTitle = url.lastPathComponent
+                            }
+                            self.newText = combinedText
+                            if combinedText.isEmpty {
+                                self.doclingErrorMessage = "Aucun fichier texte trouvé dans le dossier."
+                            }
+                        }
+                    } catch {
+                        self.doclingErrorMessage = "Erreur de lecture du dossier."
+                    }
+                } else {
+                    self.doclingErrorMessage = "Format de fichier non pris en charge."
+                }
+            }
+        case .failure(let error):
+            self.doclingErrorMessage = "Erreur d'importation: \(error.localizedDescription)"
         }
     }
 }
