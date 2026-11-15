@@ -1,0 +1,45 @@
+name: Build Native SwiftUI iOS IPA
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build-swiftui-ios:
+    name: Build SwiftUI IPA
+    runs-on: macos-14
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set Xcode Version
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+
+      - name: Build Xcode iOS App
+        run: |
+          xcodebuild -project SynapseMindSwift.xcodeproj \
+            -scheme SynapseMindSwift \
+            -sdk iphoneos \
+            -configuration Release \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            PROVISIONING_PROFILE_SPECIFIER=""
+
+      - name: Package IPA
+        run: |
+          mkdir -p Payload
+          cp -r build/Build/Products/Release-iphoneos/SynapseMindSwift.app Payload/
+          zip -r -y SynapseMindSwift.ipa Payload --symlinks
+          rm -rf Payload
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: synapse-mind-swiftui-ios
+          path: SynapseMindSwift.ipa
+          retention-days: 30

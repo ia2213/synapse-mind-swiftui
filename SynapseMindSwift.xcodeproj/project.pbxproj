@@ -1,0 +1,240 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000012B00000000000001 /* SynapseMindApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000012B00000000000001 /* SynapseMindApp.swift */; };
+		A10000022B00000000000002 /* DocumentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000022B00000000000002 /* DocumentModel.swift */; };
+		A10000032B00000000000003 /* FlashcardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000032B00000000000003 /* FlashcardModel.swift */; };
+		A10000042B00000000000004 /* ConceptModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000042B00000000000004 /* ConceptModel.swift */; };
+		A10000052B00000000000005 /* SRSEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000052B00000000000005 /* SRSEngine.swift */; };
+		A10000062B00000000000006 /* LetterStrippingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000062B00000000000006 /* LetterStrippingEngine.swift */; };
+		A10000072B00000000000007 /* LocalNLPExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000072B00000000000007 /* LocalNLPExtractor.swift */; };
+		A10000082B00000000000008 /* AppleVisionOCREngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000082B00000000000008 /* AppleVisionOCREngine.swift */; };
+		A10000092B00000000000009 /* DoclingClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000092B00000000000009 /* DoclingClient.swift */; };
+		A10000102B00000000000010 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000102B00000000000010 /* DatabaseManager.swift */; };
+		A10000112B00000000000011 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000112B00000000000011 /* DashboardView.swift */; };
+		A10000122B00000000000012 /* ActiveRevisionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000122B00000000000012 /* ActiveRevisionView.swift */; };
+		A10000132B00000000000013 /* DocumentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000132B00000000000013 /* DocumentsView.swift */; };
+		A10000142B00000000000014 /* SynapticGraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000142B00000000000014 /* SynapticGraphView.swift */; };
+		A10000152B00000000000015 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000152B00000000000015 /* MainTabView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		B10000012B00000000000001 /* SynapseMindApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/SynapseMindApp.swift; sourceTree = "<group>"; };
+		B10000022B00000000000002 /* DocumentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/DocumentModel.swift; sourceTree = "<group>"; };
+		B10000032B00000000000003 /* FlashcardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/FlashcardModel.swift; sourceTree = "<group>"; };
+		B10000042B00000000000004 /* ConceptModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/ConceptModel.swift; sourceTree = "<group>"; };
+		B10000052B00000000000005 /* SRSEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Engines/SRSEngine.swift; sourceTree = "<group>"; };
+		B10000062B00000000000006 /* LetterStrippingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Engines/LetterStrippingEngine.swift; sourceTree = "<group>"; };
+		B10000072B00000000000007 /* LocalNLPExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Engines/LocalNLPExtractor.swift; sourceTree = "<group>"; };
+		B10000082B00000000000008 /* AppleVisionOCREngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Engines/AppleVisionOCREngine.swift; sourceTree = "<group>"; };
+		B10000092B00000000000009 /* DoclingClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Engines/DoclingClient.swift; sourceTree = "<group>"; };
+		B10000102B00000000000010 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/DatabaseManager.swift; sourceTree = "<group>"; };
+		B10000112B00000000000011 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/DashboardView.swift; sourceTree = "<group>"; };
+		B10000122B00000000000012 /* ActiveRevisionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ActiveRevisionView.swift; sourceTree = "<group>"; };
+		B10000132B00000000000013 /* DocumentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/DocumentsView.swift; sourceTree = "<group>"; };
+		B10000142B00000000000014 /* SynapticGraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SynapticGraphView.swift; sourceTree = "<group>"; };
+		B10000152B00000000000015 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/MainTabView.swift; sourceTree = "<group>"; };
+		C10000012B00000000000001 /* SynapseMindSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SynapseMindSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D10000012B00000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E10000012B00000000000001 = {
+			isa = PBXGroup;
+			children = (
+				E10000022B00000000000002 /* SynapseMindSwift */,
+				C10000012B00000000000001 /* SynapseMindSwift.app */,
+			);
+			sourceTree = "<group>";
+		};
+		E10000022B00000000000002 /* SynapseMindSwift */ = {
+			isa = PBXGroup;
+			children = (
+				B10000012B00000000000001 /* SynapseMindApp.swift */,
+				B10000022B00000000000002 /* DocumentModel.swift */,
+				B10000032B00000000000003 /* FlashcardModel.swift */,
+				B10000042B00000000000004 /* ConceptModel.swift */,
+				B10000052B00000000000005 /* SRSEngine.swift */,
+				B10000062B00000000000006 /* LetterStrippingEngine.swift */,
+				B10000072B00000000000007 /* LocalNLPExtractor.swift */,
+				B10000082B00000000000008 /* AppleVisionOCREngine.swift */,
+				B10000092B00000000000009 /* DoclingClient.swift */,
+				B10000102B00000000000010 /* DatabaseManager.swift */,
+				B10000112B00000000000011 /* DashboardView.swift */,
+				B10000122B00000000000012 /* ActiveRevisionView.swift */,
+				B10000132B00000000000013 /* DocumentsView.swift */,
+				B10000142B00000000000014 /* SynapticGraphView.swift */,
+				B10000152B00000000000015 /* MainTabView.swift */,
+			);
+			path = SynapseMindSwift;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F10000012B00000000000001 /* SynapseMindSwift */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = G10000012B00000000000001 /* Build configuration list for PBXNativeTarget "SynapseMindSwift" */;
+			buildPhases = (
+				H10000012B00000000000001 /* Sources */,
+				D10000012B00000000000001 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SynapseMindSwift;
+			productName = SynapseMindSwift;
+			productReference = C10000012B00000000000001 /* SynapseMindSwift.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		I10000012B00000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					F10000012B00000000000001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = J10000012B00000000000001 /* Build configuration list for PBXProject "SynapseMindSwift" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = E10000012B00000000000001;
+			productRefGroup = E10000012B00000000000001;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F10000012B00000000000001 /* SynapseMindSwift */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		H10000012B00000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000012B00000000000001 /* SynapseMindApp.swift in Sources */,
+				A10000022B00000000000002 /* DocumentModel.swift in Sources */,
+				A10000032B00000000000003 /* FlashcardModel.swift in Sources */,
+				A10000042B00000000000004 /* ConceptModel.swift in Sources */,
+				A10000052B00000000000005 /* SRSEngine.swift in Sources */,
+				A10000062B00000000000006 /* LetterStrippingEngine.swift in Sources */,
+				A10000072B00000000000007 /* LocalNLPExtractor.swift in Sources */,
+				A10000082B00000000000008 /* AppleVisionOCREngine.swift in Sources */,
+				A10000092B00000000000009 /* DoclingClient.swift in Sources */,
+				A10000102B00000000000010 /* DatabaseManager.swift in Sources */,
+				A10000112B00000000000011 /* DashboardView.swift in Sources */,
+				A10000122B00000000000012 /* ActiveRevisionView.swift in Sources */,
+				A10000132B00000000000013 /* DocumentsView.swift in Sources */,
+				A10000142B00000000000014 /* SynapticGraphView.swift in Sources */,
+				A10000152B00000000000015 /* MainTabView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		K10000012B00000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "SynapseMind";
+				INFOPLIST_KEY_LSRequiresIPhoneOS = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.synapse.mindswift;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		K10000022B00000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "SynapseMind";
+				INFOPLIST_KEY_LSRequiresIPhoneOS = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.synapse.mindswift;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		G10000012B00000000000001 /* Build configuration list for PBXNativeTarget "SynapseMindSwift" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				K10000012B00000000000001 /* Debug */,
+				K10000022B00000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		J10000012B00000000000001 /* Build configuration list for PBXProject "SynapseMindSwift" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				K10000012B00000000000001 /* Debug */,
+				K10000022B00000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = I10000012B00000000000001 /* Project object */;
+}

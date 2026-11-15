@@ -1,0 +1,140 @@
+import SwiftUI
+
+public struct DocumentsView: View {
+    @ObservedObject var db = DatabaseManager.shared
+
+    @State private var showAddSheet: Bool = false
+    @State private var newTitle: String = ""
+    @State private var newCategory: String = "Général"
+    @State private var newText: String = ""
+    @State private var isProcessingDocling: Bool = false
+
+    public var body: some View {
+        NavigationView {
+            ZStack {
+                Color(red: 0.04, green: 0.06, blue: 0.10).ignoresSafeArea()
+
+                if db.documents.isEmpty {
+                    VStack(spacing: 16) {
+                        Image(systemName: "folder.badge.plus")
+                            .font(.system(size: 60))
+                            .foregroundColor(.gray)
+                        Text("Aucun cours pour le moment")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                        Text("Ajoutez vos documents ou leçons pour générer automatiquement les flashcards et la fiche de synthèse.")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+
+                        Button(action: { showAddSheet = true }) {
+                            HStack {
+                                Image(systemName: "plus")
+                                Text("Ajouter un Cours")
+                            }
+                            .fontWeight(.bold)
+                            .foregroundColor(.black)
+                            .padding()
+                            .background(Color(red: 0.08, green: 0.72, blue: 0.65))
+                            .cornerRadius(12)
+                        }
+                    }
+                } else {
+                    List {
+                        ForEach(db.documents) { doc in
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack {
+                                    Text(doc.category)
+                                        .font(.caption2)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(Color(red: 0.08, green: 0.72, blue: 0.65))
+                                    Spacer()
+                                    Text("Maîtrise : \(Int(doc.avgMastery))%")
+                                        .font(.caption2)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.green)
+                                }
+
+                                Text(doc.title)
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+
+                                Text("\(doc.flashcardsCount) Flashcards QROC générées")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+
+                                ProgressView(value: doc.avgMastery, total: 100.0)
+                                    .accentColor(Color(red: 0.08, green: 0.72, blue: 0.65))
+                            }
+                            .padding(.vertical, 6)
+                            .listRowBackground(Color(red: 0.07, green: 0.10, blue: 0.15))
+                        }
+                        .onDelete { indexSet in
+                            indexSet.forEach { idx in
+                                db.deleteDocument(db.documents[idx].id)
+                            }
+                        }
+                    }
+                    .listStyle(PlainListStyle())
+                }
+            }
+            .navigationTitle("Bibliothèque de Cours")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: { showAddSheet = true }) {
+                        Image(systemName: "plus")
+                            .foregroundColor(Color(red: 0.08, green: 0.72, blue: 0.65))
+                    }
+                }
+            }
+            .sheet(isPresented: $showAddSheet) {
+                NavigationView {
+                    Form {
+                        Section(header: Text("Informations du Cours")) {
+                            TextField("Titre (ex: Insuffisance Cardiaque)", text: $newTitle)
+                            TextField("Matière / Discipline", text: $newCategory)
+                        }
+
+                        Section(header: Text("Contenu du Cours / Fiche (Texte ou Docling)")) {
+                            TextEditor(text: $newText)
+                                .frame(height: 180)
+                        }
+
+                        Section {
+                            Button(action: {
+                                if !newText.trimmingCharacters(in: .whitespaces).isEmpty {
+                                    db.addDocument(
+                                        title: newTitle.isEmpty ? "Nouveau Cours" : newTitle,
+                                        category: newCategory.isEmpty ? "Général" : newCategory,
+                                        text: newText
+                                    )
+                                    newTitle = ""
+                                    newText = ""
+                                    showAddSheet = false
+                                }
+                            }) {
+                                HStack {
+                                    Spacer()
+                                    Text("Générer les Cartes & Synthèse")
+                                        .fontWeight(.bold)
+                                        .foregroundColor(Color(red: 0.08, green: 0.72, blue: 0.65))
+                                    Spacer()
+                                }
+                            }
+                        }
+                    }
+                    .navigationTitle("Nouveau Cours")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button("Annuler") { showAddSheet = false }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
