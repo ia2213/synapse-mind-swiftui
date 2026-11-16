@@ -1,5 +1,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
+import PDFKit
 
 public struct DocumentsView: View {
     @ObservedObject var db = DatabaseManager.shared
@@ -112,7 +113,7 @@ public struct DocumentsView: View {
                             if isProcessingDocling {
                                 HStack {
                                     ProgressView()
-                                    Text("Extraction Docling en cours...")
+                                    Text("Extraction du document en cours...")
                                         .font(.caption)
                                         .foregroundColor(.gray)
                                 }
@@ -178,7 +179,11 @@ public struct DocumentsView: View {
             if url.startAccessingSecurityScopedResource() {
                 defer { url.stopAccessingSecurityScopedResource() }
                 
-                // Si c'est un fichier PDF, on l'envoie à Docling
+                if newTitle.isEmpty {
+                    self.newTitle = url.deletingPathExtension().lastPathComponent
+                }
+                
+                // Si c'est un fichier PDF
                 if url.pathExtension.lowercased() == "pdf" {
                     guard let fileData = try? Data(contentsOf: url) else {
                         self.doclingErrorMessage = "Erreur de lecture du PDF"
@@ -188,10 +193,6 @@ public struct DocumentsView: View {
                     self.isProcessingDocling = true
                     self.doclingErrorMessage = nil
                     
-                    if newTitle.isEmpty {
-                        self.newTitle = url.deletingPathExtension().lastPathComponent
-                    }
-                    
                     DoclingClient.shared.convertDocument(fileData: fileData, filename: url.lastPathComponent) { res in
                         DispatchQueue.main.async {
                             self.isProcessingDocling = false
@@ -199,19 +200,22 @@ public struct DocumentsView: View {
                             case .success(let markdown):
                                 self.newText = markdown
                             case .failure(let error):
-                                self.doclingErrorMessage = "Erreur Docling: \(error.localizedDescription)"
+                                // Fallback local automatique immédiat
+                                let localExtracted = LocalPDFExtractor.extractText(from: fileData)
+                                if !localExtracted.isEmpty {
+                                    self.newText = localExtracted
+                                } else {
+                                    self.doclingErrorMessage = "Erreur d'extraction : \(error.localizedDescription)"
+                                }
                             }
                         }
                     }
                 } 
-                // Si c'est un fichier texte ou autre format lisible en chaîne de caractères
+                // Si c'est un fichier texte (.txt, .md)
                 else if let text = try? String(contentsOf: url) {
-                    if newTitle.isEmpty {
-                        self.newTitle = url.deletingPathExtension().lastPathComponent
-                    }
                     self.newText = text
                 }
-                // Si c'est un dossier (on récupère les fichiers textes/pdf à l'intérieur)
+                // Si c'est un dossier
                 else if url.hasDirectoryPath {
                     do {
                         let fileManager = FileManager.default
@@ -219,18 +223,20 @@ public struct DocumentsView: View {
                         
                         var combinedText = ""
                         for fileURL in contents {
-                            if fileURL.pathExtension.lowercased() == "txt", let text = try? String(contentsOf: fileURL) {
+                            if fileURL.pathExtension.lowercased() == "txt" || fileURL.pathExtension.lowercased() == "md", let text = try? String(contentsOf: fileURL) {
                                 combinedText += "\n\n--- \(fileURL.lastPathComponent) ---\n" + text
+                            } else if fileURL.pathExtension.lowercased() == "pdf", let data = try? Data(contentsOf: fileURL) {
+                                let pdfText = LocalPDFExtractor.extractText(from: data)
+                                if !pdfText.isEmpty {
+                                    combinedText += "\n\n--- \(fileURL.lastPathComponent) ---\n" + pdfText
+                                }
                             }
                         }
                         
                         DispatchQueue.main.async {
-                            if self.newTitle.isEmpty {
-                                self.newTitle = url.lastPathComponent
-                            }
                             self.newText = combinedText
                             if combinedText.isEmpty {
-                                self.doclingErrorMessage = "Aucun fichier texte trouvé dans le dossier."
+                                self.doclingErrorMessage = "Aucun fichier texte ou PDF lisible trouvé dans le dossier."
                             }
                         }
                     } catch {
@@ -241,7 +247,7 @@ public struct DocumentsView: View {
                 }
             }
         case .failure(let error):
-            self.doclingErrorMessage = "Erreur d'importation: \(error.localizedDescription)"
+            self.doclingErrorMessage = "Erreur d'accès: \(error.localizedDescription)"
         }
     }
 }
