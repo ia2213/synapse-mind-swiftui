@@ -10,7 +10,13 @@ public struct DocumentsView: View {
     @State private var newTitle: String = ""
     @State private var newCategory: String = "Général"
     @State private var newText: String = ""
+    
+    // Configuration Docling
+    @State private var selectedDoclingMode: DoclingQualityMode = .balanced
     @State private var isProcessingDocling: Bool = false
+    @State private var doclingProgressText: String = ""
+    @State private var doclingProgressValue: Double = 0.0
+    @State private var doclingStatsSummary: String? = nil
     @State private var doclingErrorMessage: String? = nil
 
     public var body: some View {
@@ -27,7 +33,7 @@ public struct DocumentsView: View {
                             .font(.title3)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
-                        Text("Ajoutez vos documents ou leçons pour générer automatiquement les flashcards et la fiche de synthèse.")
+                        Text("Importez vos cours avec le moteur Docling embarqué (100% local, sans réseau) pour générer automatiquement les flashcards QROC et le graphe de concepts.")
                             .font(.caption)
                             .foregroundColor(.gray)
                             .multilineTextAlignment(.center)
@@ -99,34 +105,80 @@ public struct DocumentsView: View {
                     Form {
                         Section(header: Text("Informations du Cours")) {
                             TextField("Titre (ex: Insuffisance Cardiaque)", text: $newTitle)
-                            TextField("Matière / Discipline", text: $newCategory)
+                            TextField("Matière / Discipline (ex: Cardiologie)", text: $newCategory)
                         }
 
-                        Section(header: Text("Contenu du Cours (Manuel ou Import)")) {
+                        Section(header: Text("Moteur Docling (100% Local)")) {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Mode de Conversion Docling :")
+                                    .font(.caption)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.gray)
+
+                                Picker("Mode Docling", selection: $selectedDoclingMode) {
+                                    ForEach(DoclingQualityMode.allCases) { mode in
+                                        Text(mode.rawValue).tag(mode)
+                                    }
+                                }
+                                .pickerStyle(SegmentedPickerStyle())
+
+                                Text(selectedDoclingMode.description)
+                                    .font(.caption2)
+                                    .foregroundColor(.gray)
+                                    .padding(.top, 2)
+                            }
+                            .padding(.vertical, 4)
+
                             Button(action: { showFileImporter = true }) {
                                 HStack {
                                     Image(systemName: "doc.badge.plus")
-                                    Text("Importer un fichier (PDF, TXT, Dossier)")
+                                    Text("Importer un Document (PDF, TXT, Dossier)")
+                                        .fontWeight(.semibold)
                                 }
+                                .foregroundColor(Color(red: 0.08, green: 0.72, blue: 0.65))
                             }
-                            
+
                             if isProcessingDocling {
+                                VStack(alignment: .leading, spacing: 6) {
+                                    HStack {
+                                        ProgressView()
+                                            .scaleEffect(0.8)
+                                        Text(doclingProgressText)
+                                            .font(.caption)
+                                            .foregroundColor(.gray)
+                                    }
+                                    ProgressView(value: doclingProgressValue, total: 1.0)
+                                        .accentColor(Color(red: 0.08, green: 0.72, blue: 0.65))
+                                }
+                                .padding(.vertical, 4)
+                            }
+
+                            if let stats = doclingStatsSummary {
                                 HStack {
-                                    ProgressView()
-                                    Text("Extraction du document en cours...")
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundColor(.green)
+                                    Text(stats)
                                         .font(.caption)
-                                        .foregroundColor(.gray)
+                                        .foregroundColor(.green)
                                 }
                             }
-                            
+
                             if let errorMsg = doclingErrorMessage {
-                                Text(errorMsg)
-                                    .font(.caption)
-                                    .foregroundColor(.red)
+                                HStack {
+                                    Image(systemName: "exclamationmark.triangle.fill")
+                                        .foregroundColor(.red)
+                                    Text(errorMsg)
+                                        .font(.caption)
+                                        .foregroundColor(.red)
+                                }
                             }
 
                             TextEditor(text: $newText)
                                 .frame(height: 180)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                                )
                         }
 
                         Section {
@@ -139,12 +191,13 @@ public struct DocumentsView: View {
                                     )
                                     newTitle = ""
                                     newText = ""
+                                    doclingStatsSummary = nil
                                     showAddSheet = false
                                 }
                             }) {
                                 HStack {
                                     Spacer()
-                                    Text("Générer les Cartes & Synthèse")
+                                    Text("Générer les Cartes QROC & Synthèse")
                                         .fontWeight(.bold)
                                         .foregroundColor(Color(red: 0.08, green: 0.72, blue: 0.65))
                                     Spacer()
@@ -170,74 +223,79 @@ public struct DocumentsView: View {
             }
         }
     }
-    
+
     private func handleFileImport(_ result: Result<[URL], Error>) {
         switch result {
         case .success(let urls):
             guard let url = urls.first else { return }
-            
+
             if url.startAccessingSecurityScopedResource() {
                 defer { url.stopAccessingSecurityScopedResource() }
-                
+
                 if newTitle.isEmpty {
                     self.newTitle = url.deletingPathExtension().lastPathComponent
                 }
-                
-                // Si c'est un fichier PDF
+
+                // 1. Si c'est un fichier PDF -> Traitement par DoclingLocalEngine
                 if url.pathExtension.lowercased() == "pdf" {
                     guard let fileData = try? Data(contentsOf: url) else {
-                        self.doclingErrorMessage = "Erreur de lecture du PDF"
+                        self.doclingErrorMessage = "Erreur de lecture du fichier PDF"
                         return
                     }
-                    
+
                     self.isProcessingDocling = true
                     self.doclingErrorMessage = nil
-                    
-                    DoclingClient.shared.convertDocument(fileData: fileData, filename: url.lastPathComponent) { res in
-                        DispatchQueue.main.async {
+                    self.doclingStatsSummary = nil
+                    self.doclingProgressValue = 0.0
+                    self.doclingProgressText = "Initialisation de Docling..."
+
+                    DoclingLocalEngine.shared.parsePDF(
+                        pdfData: fileData,
+                        mode: selectedDoclingMode,
+                        progress: { progress, text in
+                            self.doclingProgressValue = progress
+                            self.doclingProgressText = text
+                        },
+                        completion: { res in
                             self.isProcessingDocling = false
                             switch res {
-                            case .success(let markdown):
-                                self.newText = markdown
+                            case .success(let doclingResult):
+                                self.newText = doclingResult.markdown
+                                self.doclingStatsSummary = "Docling (\(selectedDoclingMode.rawValue)) : \(doclingResult.pagesCount) pages, \(doclingResult.headingsCount) titres détectés en \(String(format: "%.1f", doclingResult.processingTime))s"
                             case .failure(let error):
-                                // Fallback local automatique immédiat
-                                let localExtracted = LocalPDFExtractor.extractText(from: fileData)
-                                if !localExtracted.isEmpty {
-                                    self.newText = localExtracted
-                                } else {
-                                    self.doclingErrorMessage = "Erreur d'extraction : \(error.localizedDescription)"
-                                }
+                                self.doclingErrorMessage = "Erreur Docling : \(error.localizedDescription)"
                             }
                         }
-                    }
-                } 
-                // Si c'est un fichier texte (.txt, .md)
+                    )
+                }
+                // 2. Si c'est un fichier texte brut
                 else if let text = try? String(contentsOf: url) {
                     self.newText = text
+                    self.doclingStatsSummary = "Texte brut importé (\(text.count) caractères)"
                 }
-                // Si c'est un dossier
+                // 3. Si c'est un dossier complet
                 else if url.hasDirectoryPath {
                     do {
                         let fileManager = FileManager.default
                         let contents = try fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-                        
+
                         var combinedText = ""
                         for fileURL in contents {
                             if fileURL.pathExtension.lowercased() == "txt" || fileURL.pathExtension.lowercased() == "md", let text = try? String(contentsOf: fileURL) {
                                 combinedText += "\n\n--- \(fileURL.lastPathComponent) ---\n" + text
                             } else if fileURL.pathExtension.lowercased() == "pdf", let data = try? Data(contentsOf: fileURL) {
-                                let pdfText = LocalPDFExtractor.extractText(from: data)
-                                if !pdfText.isEmpty {
-                                    combinedText += "\n\n--- \(fileURL.lastPathComponent) ---\n" + pdfText
+                                let localExtracted = LocalPDFExtractor.extractText(from: data)
+                                if !localExtracted.isEmpty {
+                                    combinedText += "\n\n--- \(fileURL.lastPathComponent) ---\n" + localExtracted
                                 }
                             }
                         }
-                        
-                        DispatchQueue.main.async {
-                            self.newText = combinedText
-                            if combinedText.isEmpty {
-                                self.doclingErrorMessage = "Aucun fichier texte ou PDF lisible trouvé dans le dossier."
-                            }
+
+                        self.newText = combinedText
+                        if combinedText.isEmpty {
+                            self.doclingErrorMessage = "Aucun fichier lisible trouvé dans le dossier sélectionné."
+                        } else {
+                            self.doclingStatsSummary = "Dossier importé avec succès"
                         }
                     } catch {
                         self.doclingErrorMessage = "Erreur de lecture du dossier."
@@ -247,7 +305,7 @@ public struct DocumentsView: View {
                 }
             }
         case .failure(let error):
-            self.doclingErrorMessage = "Erreur d'accès: \(error.localizedDescription)"
+            self.doclingErrorMessage = "Erreur de sélection : \(error.localizedDescription)"
         }
     }
 }

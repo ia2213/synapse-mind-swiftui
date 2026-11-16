@@ -17,6 +17,7 @@
 		A10000082B00000000000008 /* AppleVisionOCREngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000082B00000000000008 /* AppleVisionOCREngine.swift */; };
 		A10000092B00000000000009 /* DoclingClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000092B00000000000009 /* DoclingClient.swift */; };
 		A10000162B00000000000016 /* LocalPDFExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000162B00000000000016 /* LocalPDFExtractor.swift */; };
+		A10000172B00000000000017 /* DoclingLocalEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000172B00000000000017 /* DoclingLocalEngine.swift */; };
 		A10000102B00000000000010 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000102B00000000000010 /* DatabaseManager.swift */; };
 		A10000112B00000000000011 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000112B00000000000011 /* DashboardView.swift */; };
 		A10000122B00000000000012 /* ActiveRevisionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000122B00000000000012 /* ActiveRevisionView.swift */; };
@@ -36,6 +37,7 @@
 		B10000082B00000000000008 /* AppleVisionOCREngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Engines/AppleVisionOCREngine.swift; sourceTree = "<group>"; };
 		B10000092B00000000000009 /* DoclingClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Engines/DoclingClient.swift; sourceTree = "<group>"; };
 		B10000162B00000000000016 /* LocalPDFExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Engines/LocalPDFExtractor.swift; sourceTree = "<group>"; };
+		B10000172B00000000000017 /* DoclingLocalEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Engines/DoclingLocalEngine.swift; sourceTree = "<group>"; };
 		B10000102B00000000000010 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/DatabaseManager.swift; sourceTree = "<group>"; };
 		B10000112B00000000000011 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/DashboardView.swift; sourceTree = "<group>"; };
 		B10000122B00000000000012 /* ActiveRevisionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ActiveRevisionView.swift; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 				B10000082B00000000000008 /* AppleVisionOCREngine.swift */,
 				B10000092B00000000000009 /* DoclingClient.swift */,
 				B10000162B00000000000016 /* LocalPDFExtractor.swift */,
+				B10000172B00000000000017 /* DoclingLocalEngine.swift */,
 				B10000102B00000000000010 /* DatabaseManager.swift */,
 				B10000112B00000000000011 /* DashboardView.swift */,
 				B10000122B00000000000012 /* ActiveRevisionView.swift */,
@@ -153,6 +156,7 @@
 				A10000082B00000000000008 /* AppleVisionOCREngine.swift in Sources */,
 				A10000092B00000000000009 /* DoclingClient.swift in Sources */,
 				A10000162B00000000000016 /* LocalPDFExtractor.swift in Sources */,
+				A10000172B00000000000017 /* DoclingLocalEngine.swift in Sources */,
 				A10000102B00000000000010 /* DatabaseManager.swift in Sources */,
 				A10000112B00000000000011 /* DashboardView.swift in Sources */,
 				A10000122B00000000000012 /* ActiveRevisionView.swift in Sources */,
@@ -171,7 +175,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "SynapseMind";
 				INFOPLIST_KEY_LSRequiresIPhoneOS = YES;
@@ -183,7 +187,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.synapse.mindswift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -197,7 +201,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "SynapseMind";
 				INFOPLIST_KEY_LSRequiresIPhoneOS = YES;
@@ -209,7 +213,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.synapse.mindswift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
